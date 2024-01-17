@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Temperature and Humidity Data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #5e72e4;
+        }
+
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+  <div class="min-height-300  position-absolute w-100"></div>
+
+  <main class="main-content position-relative border-radius-lg ">
+
+    <canvas id="myChart" width="400" height="200"></canvas>
+  </main>
+
+    <script>
+        // Récupérer les données de température et d'humidité depuis Django
+        var temperatureData = [
+            {% for data in temperature_humidity_data %}
+                {{ data.temperature }},
+            {% endfor %}
+        ];
+
+        var humidityData = [
+            {% for data in temperature_humidity_data %}
+                {{ data.humidity }},
+            {% endfor %}
+        ];
+
+        // Créer un graphique avec Chart.js
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from(Array(temperatureData.length).keys()), // Utiliser des indices comme labels
+                datasets: [{
+                    label: 'Temperature',
+                    data: temperatureData,
+                    borderColor: '#ff6347', // Red
+                    backgroundColor: 'rgba(255, 99, 71, 0.2)', // Red with opacity
+                    fill: true
+                }, {
+                    label: 'Humidity',
+                    data: humidityData,
+                    borderColor: '#4682b4', // SteelBlue
+                    backgroundColor: 'rgba(70, 130, 180, 0.2)', // SteelBlue with opacity
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

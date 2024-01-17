@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../static/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../static/assets/img/favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>
+    Clima Track | Home
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link href="../static/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="../static/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+<style>
+        h1{
+				font-size: 4em;
+				text-align: center;
+				padding-top: 50px;
+				color: #344767;
+				font-family: "agency fb";
+				margin: 0;
+			}
+
+			.container{
+				width: 800px;
+				height: 100vh;
+				margin: 0 auto;
+			}
+
+			.weather-sun,.weather-cloud,.weather-snow,.weather-cloudAndSun,.weather-rain{
+				width: 200px;
+				height: 200px;
+				display: inline-block;
+				position: relative;
+			}
+
+			.weather-cloudAndSun,.weather-rain{
+				margin-left: 60px;
+			}
+
+			.sun{
+				width: 100px;
+				height: 100px;
+				background: linear-gradient(45deg,#F3A966,yellow);
+				border-radius: 100%;
+				transform: rotate(0deg);
+				animation: xuanzhuang 12s infinite linear;
+				position: absolute;
+                left: 30%;
+                top: 35%;
+			}
+
+			.rays{
+				width: 8px;
+				height: 15px;
+				background: yellow;
+				position: absolute;
+				transform: translateX(-50%);
+				left: 50%;
+				top: -25px;
+				box-shadow: 0 135px yellow;
+				border-radius: 4px;
+				transform-origin: 0px 75px;
+			}
+
+			.rays:nth-child(2){
+				transform: rotate(45deg);
+			}
+
+			.rays:nth-child(3){
+				transform: rotate(90deg);
+			}
+
+			.rays:nth-child(4){
+				transform: rotate(135deg);
+			}
+
+			@keyframes xuanzhuang {
+				100% { transform: rotate(360deg); }
+			}
+
+
+			.cloud{
+				border-radius: 25px;
+				position: absolute;
+				top: 70%;
+				left: 50%;
+				width: 150px;
+				height: 50px;
+				background: #cdedf8;
+			}
+
+			.cloud:nth-child(2){
+				left: 200px;
+				width: 100px;
+				height: 30px;
+				background: #cdedf8;
+				opacity: 1;
+				animation: cloud 8s linear infinite;
+			}
+
+			.cloud::after,.cloud::before{
+				content: '';
+				display: block;
+				background: #cdedf8;
+				border-radius: 50%;
+				position: absolute;
+
+			}
+
+			.cloud:nth-child(2)::after,.cloud:nth-child(2)::before{
+				content: '';
+				display: block;
+				background: #cdedf8;
+				border-radius: 50%;
+				position: absolute;
+
+			}
+
+			.cloud::after{
+				width: 80px;
+				height: 80px;
+				left: 45px;
+				top: -45px;
+			}
+
+			.cloud::before{
+				width: 60px;
+				height: 60px;
+				top: -10px;
+				left: 0;
+			}
+
+			.cloud:nth-child(2)::after{
+				width: 50px;
+				height: 50px;
+				left: 35px;
+				top: -30px;
+			}
+
+			.cloud:nth-child(2)::before{
+				width: 40px;
+				height: 40px;
+				top: -10px;
+				left: 0px;
+			}
+
+			@keyframes cloud {
+				0% { opacity: 0; }
+				50% { opacity: 1; }
+				100% {
+					opacity: 0;
+					transform: scale(0.8) translateX(-200%);
+				}
+			}
+
+			.snow{
+				width: 150px;
+				height: 10px;
+				border-radius: 5px;
+				background: #CDEDF8;
+				transform: rotate(0deg);
+				position: absolute;
+				top: 70%;
+				left: 60%;
+				animation: Rotate 12s infinite linear;
+				position: relative;
+			}
+
+			.snow::after,.snow::before{
+				content: '';
+				width: 150px;
+				height: 10px;
+				border-radius: 5px;
+				background: #CDEDF8;
+				position: absolute;
+			}
+
+			.snow::after{
+				transform: rotate(60deg);
+			}
+
+			.snow::before{
+				transform: rotate(120deg);
+			}
+
+			.f{
+				width: 28px;
+				height: 10px;
+				border-radius: 5px;
+				position: absolute;
+				background: #CDEDF8;
+				top: -45px;
+				left: 25px;
+				box-shadow: 0px 90px #CDEDF8,72px 90px #CDEDF8,72px 0px #CDEDF8;
+			}
+
+			.f::after,.f::before{
+				content: '';
+				width: 28px;
+				height: 10px;
+				transform: rotate(60deg);
+				border-radius: 5px;
+				position: absolute;
+				background: #CDEDF8;
+				top: -10px;
+				left: 55px;
+				box-shadow: 0px 90px #CDEDF8,72px 90px #CDEDF8,72px 0px #CDEDF8;
+			}
+
+			.f::before{
+				transform: rotate(120deg);
+				left: 15px;
+				box-shadow: 72px 0px #CDEDF8,72px -90px #CDEDF8,0px -90px #CDEDF8;
+			}
+
+			@keyframes Rotate {
+				100% { transform: rotate(360deg); }
+			}
+
+			.weather-cloudAndSun .cloud{
+				z-index: 1;
+				opacity: 0.95;
+			}
+
+			.weather-cloudAndSun .sun{
+				position: absolute;
+				left: 180px;
+				top: 60px;
+				z-index: 0;
+			}
+
+			.rain{
+				width: 4px;
+				height: 40px;
+				background:linear-gradient(transparent,lightblue);
+				position: absolute;
+				left: 210px;
+				top: 170px;
+				border-radius: 2px;
+				animation: rainning 2s infinite;
+			}
+
+			.rain:nth-child(2){
+				height: 20px;
+				left: 190px;
+				top: 190px;
+			}
+
+			.rain:nth-child(3){
+				height: 50px;
+				left: 170px;
+				top: 180px;
+			}
+
+			.rain:nth-child(4){
+				height: 25px;
+				left: 150px;
+				top: 185px;
+			}
+
+			@keyframes rainning{
+				100%{
+					top: 200px;
+				}
+			}
+            #state {
+                margin-right: 30%;
+            }
+</style>
+</head>
+
+<body class="g-sidenav-show bg-gray-100">
+  <div class="border-radius-xl position-relative" style="background-image: url('../static/assets/img/vr-bg.jpg') ; background-size: cover;">
+
+  {% include 'partials/__sideBar.html' %}
+    <main class="main-content position-relative">
+        {% include 'partials/__navbar.html' %}
+      <div class="section min-vh-85 position-relative transform-scale-0 transform-scale-md-7">
+
+        <div class="container">
+          <div class="row pt-10">
+
+            <div class="col-lg-8 col-md-11 d-flex justify-content-center align-items-center">
+
+                <div class="p-2">
+                    <h1 class="display-1 font-weight-bold mb-0">{{ temperature }}°C</h1>
+                    <h6 class="text-uppercase mb-0 ms-1">{{ weather_state }}</h6>
+                </div>
+                  <!-- Your existing HTML structure -->
+                <div class="p-2" id="state">
+                    {% if temperature < -10 %}
+                        <div class="weather-snow">
+                            <div class="snow">
+                                <div class="f"></div>
+                            </div>
+                        </div>
+                    {% elif temperature >= -10 and temperature < 5 %}
+                            <div class="weather-snow">
+                                <div class="snow">
+                                    <div class="f"></div>
+                                </div>
+                            </div>
+                    {% elif temperature >= 5 and temperature < 15 %}
+                        <div class="weather-cloud">
+                                <div class="cloud"></div>
+                                <div class="cloud"></div>
+                            </div>
+                    {% elif temperature >= 15 and temperature < 25 %}
+                        <div class="weather-cloudAndSun">
+                            <div class="cloud"></div>
+                            <div class="sun">
+                                <div class="rays"></div>
+                                <div class="rays"></div>
+                                <div class="rays"></div>
+                                <div class="rays"></div>
+                            </div>
+                        </div>
+                    {% elif temperature >= 25 %}
+                        <div class="weather-sun">
+                            <div class="sun">
+                                <div class="rays"></div>
+                                <div class="rays"></div>
+                                <div class="rays"></div>
+                                <div class="rays"></div>
+                            </div>
+                        </div>
+
+                    {% endif %}
+                </div >
+                <div class="p-2">
+                    <h1 class="display-1 font-weight-bold mb-0">{{ humidity }}%</h1>
+                    <h6 class="text-uppercase mb-0 ms-1">Humidity</h6>
+
+                </div>
+            <div class="p-2">
+                    <img src="../static/assets/img/icons/humidite.png" alt="humidite">
+                </div>
+              </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+ {% include 'partials/__fixedPlugin.html' %}
+  <!--   Core JS Files   -->
+  <script src="../static/assets/js/core/popper.min.js"></script>
+  <script src="../static/assets/js/core/bootstrap.min.js"></script>
+  <script src="../static/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../static/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../static/assets/js/argon-dashboard.min.js?v=2.0.4"></script>
+</body>
+
+</html>

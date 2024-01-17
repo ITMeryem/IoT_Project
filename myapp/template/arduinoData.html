@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Temperature and Humidity Data</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.9/dist/flatpickr.min.js"></script>
+     <link rel="apple-touch-icon" sizes="76x76" href="../static/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../static/assets/img/favicon.png">
+   <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link href="../static/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="../static/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #5e72e4;
+        }
+
+        h6 {
+            text-align: center;
+        }
+
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .reset-button {
+            background-color: #6c757d;
+            color: #fff;
+            padding: 1px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .row {
+            margin-top: 100px !important;
+        }
+        .date-selector {
+            display: flex;
+            justify-content: center;
+            font-size: small;
+            margin-top: 20px;
+        }
+        #datePicker {
+            margin-right: 9px;
+            padding: 10px;
+            cursor: pointer;
+            height: 30px;
+            border-radius: 5px;
+            border: #242424 solid 1px;
+        }
+        .date-selector label {
+            margin-right: 10px;
+            font-size: 0.80rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #344767;
+            margin-top: 0.25rem;
+        }
+        .table-responsive {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body class="g-sidenav-show bg-gray-100">
+  <div class="min-height-300 bg-primary position-absolute w-100"></div>
+  {% include 'partials/__sideBar.html' %}
+  <main class="main-content position-relative border-radius-lg">
+    {% include 'partials/__navbar.html' %}
+    <div class="container-fluid py-4 ">
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0 justify-content-center">
+              <h6>Temperature and Humidity Data</h6>
+              <div class="date-selector">
+                <label for="datePicker">Select Date Range:</label>
+                <input type="text" id="datePicker" placeholder="Select date range">
+
+                  <button class="reset-button" onclick="resetChart()">Reset Chart</button>
+              </div>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive">
+                <canvas id="myChart" width="400" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    var temperatureData = [
+      {% for data in temperature_humidity_data %}
+      {{ data.temperature }},
+      {% endfor %}
+    ];
+
+    var humidityData = [
+      {% for data in temperature_humidity_data %}
+      {{ data.humidity }},
+      {% endfor %}
+    ];
+
+    var initialTemperatureData = temperatureData.slice(); // Sauvegarder les données initiales
+    var initialHumidityData = humidityData.slice();
+
+    flatpickr("#datePicker", {
+      mode: "range",
+      dateFormat: "Y-m-d",
+      onChange: function(selectedDates, dateStr, instance) {
+        var startIndex = 0;
+        var endIndex = temperatureData.length - 1;
+
+        if (selectedDates.length === 2) {
+          // Si une période est sélectionnée, filtrer les données
+          startIndex = selectedDates[0].getDate() - 1; // Début de la période
+          endIndex = selectedDates[1].getDate(); // Fin de la période
+        }
+
+        var filteredTemperatureData = temperatureData.slice(startIndex, endIndex);
+        var filteredHumidityData = humidityData.slice(startIndex, endIndex);
+
+        // Mettre à jour le graphique avec les données filtrées
+        updateChart(filteredTemperatureData, filteredHumidityData);
+      }
+    });
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from(Array(temperatureData.length).keys()),
+        datasets: [{
+          label: 'Temperature',
+          data: temperatureData,
+          borderColor: '#ff6347',
+          backgroundColor: 'rgba(255, 99, 71, 0.2)',
+          fill: true
+        }, {
+          label: 'Humidity',
+          data: humidityData,
+          borderColor: '#4682b4',
+          backgroundColor: 'rgba(70, 130, 180, 0.2)',
+          fill: true
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    function resetChart() {
+      updateChart(initialTemperatureData, initialHumidityData);
+    }
+
+    function updateChart(temperature, humidity) {
+      myChart.data.labels = Array.from(Array(temperature.length).keys());
+      myChart.data.datasets[0].data = temperature;
+      myChart.data.datasets[1].data = humidity;
+      myChart.update();
+    }
+  </script>
+<script>
+  // Fonction pour mettre à jour les données
+  function updateData() {
+    $.ajax({
+      url: 'arduinoData',
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        // Mettez à jour les éléments de la page avec les nouvelles données
+        $('#temperature').text('Température : ' + data.temperature);
+        $('#humidity').text('Humidité : ' + data.humidity);
+      },
+      error: function(error) {
+        console.error('Erreur lors de la récupération des données:', error);
+      }
+    });
+  }
+
+  // Actualiser les données toutes les 60 secondes
+  setInterval(updateData, 30000);
+
+  // Appeler la fonction une fois au chargement de la page
+  $(document).ready(function() {
+    updateData();
+  });
+</script>
+</body>
+</html>

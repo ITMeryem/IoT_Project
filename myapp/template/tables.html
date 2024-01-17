@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../static/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../static/assets/img/favicon.png">
+  <title>
+    Clima Track | Sensor History
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link href="../static/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="../static/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+  <style>
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+    }
+
+    .step-links {
+        display: inline-block;
+        margin: 0 10px;
+    }
+
+    .step-links a {
+        color: #5e72e4;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        padding: 8px 12px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .step-links a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .current {
+        font-weight: bold;
+        color: #5E72E4;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-around;
+    }
+    /* Style du conteneur du switch (label) */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    /* Style du curseur (slider) du switch */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    /* Style du curseur du switch lorsqu'il est activé (checked) */
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    /* Style du switch lorsqu'il est activé (checked) */
+    input:checked + .slider {
+      background-color: #5E72E4;
+    }
+
+    /* Style du curseur du switch lorsqu'il est activé (checked) */
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+</style>
+</head>
+
+<body class="g-sidenav-show   bg-gray-100">
+  <div class="min-height-300 bg-primary position-absolute w-100"></div>
+{% include 'partials/__sideBar.html' %}
+  <main class="main-content position-relative border-radius-lg ">
+    <!-- Navbar -->
+{% include 'partials/__navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-4 mt-7">
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Sensor history</h6>
+                <button class="btn btn-primary" onclick="exportAllToCSV('sensor_data.csv')">Import CSV</button>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                  <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Temperature</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Humidity</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Maintenance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for data in temperature_humidity_data %}
+                    <tr>
+                      <td class="align-middle text-center text-sm">
+                        <span class="text-xs font-weight-bold mb-0">{{ data.temperature }}</span>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <p class="text-xs font-weight-bold mb-0">{{ data.humidity }}</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <span class="text-xs font-weight-bold mb-0">{{ data.timestamp}} </span>
+                      </td>
+                      <td class="align-middle text-center ">
+                        <span class="text-secondary text-xs font-weight-bold">{{ data.status_duration|default:"N/A" }}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                          <label class="switch">
+                        <input type="checkbox" id="maintenance-{{ data.id }}" data-dataId={{ data.id }}>
+                            </label>
+                      </td>
+
+                    </tr>
+                     {% endfor %}
+                  </tbody>
+                </table>
+<div class="pagination">
+    <span class="step-links">
+        {% if temperature_humidity_data.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ temperature_humidity_data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ temperature_humidity_data.number }} of {{ temperature_humidity_data.paginator.num_pages }}.
+        </span>
+
+        {% if temperature_humidity_data.has_next %}
+            <a href="?page={{ temperature_humidity_data.next_page_number }}">next</a>
+            <a href="?page={{ temperature_humidity_data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% include 'partials/__footer.html' %}
+    </div>
+  </main>
+  {% include 'partials/__fixedPlugin.html' %}
+  <!--   Core JS Files   -->
+  <script src="../static/assets/js/core/popper.min.js"></script>
+  <script src="../static/assets/js/core/bootstrap.min.js"></script>
+  <script src="../static/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../static/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../static/assets/js/argon-dashboard.min.js?v=2.0.4"></script>
+<script>
+    async function fetchAllData() {
+    try {
+        const response = await fetch('/tables/all/');
+        const data = await response.json();
+
+        if (response.ok) {
+            return data.results;
+        } else {
+            console.error(`Failed to fetch data: ${data.error || response.statusText}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching data: ${error}`);
+        return null;
+    }
+}
+
+async function exportAllToCSV(filename) {
+    const allData = await fetchAllData();
+
+    if (allData) {
+        var csvContent = "data:text/csv;charset=utf-8,";
+
+        // En-têtes
+        csvContent += "Temperature,Humidity,Date,Status,Maintenance\n";
+
+        // Données
+        allData.forEach(data => {
+            csvContent += `${data.temperature},${data.humidity},${data.timestamp},23/04/18,Edit\n`;
+        });
+
+        var encodedURI = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedURI);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+    }
+}
+
+  // Fonction pour mettre à jour les données de manière asynchrone
+  function updateTableData() {
+    $.ajax({
+      url: 'tables/all/',  // Remplacez par le chemin correct
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        if (data && data.results) {
+          // Supprimer les lignes actuelles dans le tableau
+          $('table tbody').empty();
+
+          // Ajouter les nouvelles lignes avec les données mises à jour
+          data.results.forEach(data => {
+            $('table tbody').append(`
+              <tr>
+                <td class="align-middle text-center text-sm">
+                  <span class="text-xs font-weight-bold mb-0">${data.temperature}</span>
+                </td>
+                <td class="align-middle text-center text-sm">
+                  <p class="text-xs font-weight-bold mb-0">${data.humidity}</p>
+                </td>
+                <td class="align-middle text-center text-sm">
+                  <span class="text-xs font-weight-bold mb-0">${data.timestamp}</span>
+                </td>
+                <td class="align-middle text-center">
+  <span class="text-secondary text-xs font-weight-bold">${data.status_duration}</span>
+</td>
+<td class="align-middle text-center">
+  <label class="switch">
+ <input type="checkbox" >
+<span class="slider round"></span>
+  </label>
+</td>
+
+              </tr>
+            `);
+          });
+        } else {
+          console.error('Failed to update table data: Invalid response format');
+        }
+      },
+      error: function(error) {
+        console.error('Error updating table data:', error);
+      }
+    });
+  }
+
+  // Actualiser les données toutes les 60 secondes
+  setInterval(updateTableData, 30000);
+
+  // Appeler la fonction une fois au chargement de la page
+  $(document).ready(function() {
+    updateTableData();
+  });
+
+  function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+$(document).on('change', 'input[type="checkbox"]', function() {
+  const maintenanceValue = this.checked ? 1 : 0;
+  console.log('Maintenance Value:', maintenanceValue);
+
+  const dataId = this.dataset.dataId;
+  console.log('Data ID:', dataId);
+
+  $.ajax({
+    url: `/tables/update_maintenance/${dataId}`,  // Replace with the correct URL
+    type: 'POST',
+    data: { maintenance: maintenanceValue },
+    success: function(response) {
+      console.log('Maintenance updated successfully:', response);
+      // You might want to update the table row visually here
+    },
+    error: function(error) {
+      console.error('Error updating maintenance:', error);
+    }
+  });
+});
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Sélectionnez la case à cocher par son sélecteur
+    var checkbox = document.querySelector('.switch input[type="checkbox"]');
+
+    // Ajoutez un écouteur d'événements "change" à la case à cocher
+    checkbox.addEventListener('change', function() {
+        // Récupérez l'état de la case à cocher
+        var maintenanceChecked = checkbox.checked;
+
+        // Affichez l'état dans la console
+        console.log('Maintenance checked:', maintenanceChecked);
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!-- __FridgeForm.html -->
+<form method="post" id="fridgeForm">
+    {% csrf_token %}
+
+    <div>
+        {{ form.fridge_name.label_tag }}
+        {{ form.fridge_name }}
+        {{ form.fridge_name.errors }}
+    </div>
+
+    <div>
+        {{ form.fridge_location.label_tag }}
+        {{ form.fridge_location }}
+        {{ form.fridge_location.errors }}
+    </div>
+
+    <div>
+        {{ form.temperature_min.label_tag }}
+        {{ form.temperature_min }}
+        {{ form.temperature_min.errors }}
+    </div>
+
+    <div>
+        {{ form.temperature_max.label_tag }}
+        {{ form.temperature_max }}
+        {{ form.temperature_max.errors }}
+    </div>
+
+    <div>
+        {{ form.humidity_min.label_tag }}
+        {{ form.humidity_min }}
+        {{ form.humidity_min.errors }}
+    </div>
+
+    <div>
+        {{ form.humidity_max.label_tag }}
+        {{ form.humidity_max }}
+        {{ form.humidity_max.errors }}
+    </div>
+
+    <div class="d-flex justify-content-lg-between">
+        <button type="submit">Add Fridge</button>
+        <button type="button" id="closeButton">Close</button>
+    </div>
+</form>

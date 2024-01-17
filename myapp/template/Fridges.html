@@ -1,0 +1,210 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../static/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../static/assets/img/favicon.png">
+  <title>
+    Fridges
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link href="../static/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="../static/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <!-- CSS Files -->
+  <link id="pagestyle" href="../static/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+
+<style>
+     .popup {
+         width: 35%;
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+    }
+
+    /* Add any other styling you need for the form elements inside the popup */
+
+    .popup label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .popup input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+    }
+
+    .popup button {
+        background-color: #5F73E3;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #closeButton {
+        background-color: #212429;
+    }
+
+    .popup input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-radius: 5px; /* Add border-radius */
+    }
+
+</style>
+</head>
+
+<body class="g-sidenav-show   bg-gray-100">
+  <div class="min-height-300 bg-primary position-absolute w-100"></div>
+    {% include 'partials/__sideBar.html' %}
+  <main class="main-content position-relative border-radius-lg ">
+    <!-- Navbar -->
+    {% include 'partials/__navbar.html' %}
+    <!-- End Navbar -->
+    <div class="container-fluid py-4  mt-7">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="col-md-12 mb-lg-0 mb-4">
+              <div class="card mt-4">
+                <div class="card-header pb-0 p-3">
+                  <div class="row">
+                    <div class="col-6 d-flex align-items-center">
+                      <h6 class="mb-0">Fridges List</h6>
+                    </div>
+
+                    <div class="col-6 text-end">
+                    <a class="btn bg-gradient-dark mb-0" id="toggleButton">
+    <i class="fas fa-plus"></i>&nbsp;&nbsp;
+    Add New Fridge
+</a>
+                </div>
+                  </div>
+                </div>
+                    <div class="card-body pt-4 p-3">
+                    {% if average_temperature is not None and average_humidity is not None %}
+                      <div class="card">
+                        <div class="card-header mx-4 p-3 text-center">
+                          <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                            <img src="{% static '/assets/img/icons/fridge.png' %}" alt="Fridg">                          </div>
+                        </div>
+                        <div class="card-body pt-0 p-3 text-center">
+                             {% for data in fridges_data %}
+                          <h6 class="text-center mb-0">{{ data.name }}</h6>
+                          <span class="text-xs">{{ data.location }}</span>
+                          <hr class="horizontal dark my-3">
+                             {% if average_temperature != 0 and average_humidity != 0 %}
+
+                                <p>
+                                    <label>Temperature average : </label> <span class="mb-0">{{ average_temperature }}</span> <b>°C</b>
+                                </p>
+                                 <p>
+                                     <label>Humidity average : </label> <span class="mb-0">{{ average_humidity }}</span> <b>%</b>
+                                 </p>
+                            {% endif %}
+                        </div>
+                          {% endfor %}
+                      </div>
+{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+    </div>{% include 'partials/__footer.html' %}
+  </main>
+  {% include 'partials/__fixedPlugin.html' %}
+  <!-- Pop-up content -->
+<div id="fridgePopup" class="popup">
+    <!-- Add your form fields and content for the pop-up here -->
+    <form method="post" id="fridgeForm" action="{% url 'add_fridge' %}">
+        {% csrf_token %}
+        <!-- Your form fields go here -->
+        <label for="fridgeName">Fridge Name:</label>
+        <input type="text" id="fridgeName" name="fridgeName" required>
+
+        <label for="fridgeLocation">Fridge Location:</label>
+        <input type="text" id="fridgeLocation" name="fridgeLocation" required>
+
+        <label for="temperatureMin">Temperature Min:</label>
+        <input type="number" id="temperatureMin" name="temperatureMin" required>
+
+        <label for="temperatureMax">Temperature Max:</label>
+        <input type="number" id="temperatureMax" name="temperatureMax" required>
+
+        <label for="humidityMin">Humidity Min:</label>
+        <input type="number" id="humidityMin" name="humidityMin" required>
+
+        <label for="humidityMax">Humidity Max:</label>
+        <input type="number" id="humidityMax" name="humidityMax" required>
+
+        <!-- Add more fields as needed -->
+<div class="d-flex justify-content-lg-between">
+ <button type="submit">Add Fridge</button>
+    <button id="closeButton">Close</button>
+</div>
+
+    </form>
+
+</div>
+  <!--   Core JS Files   -->
+  <script src="../static/assets/js/core/popper.min.js"></script>
+  <script src="../static/assets/js/core/bootstrap.min.js"></script>
+  <script src="../static/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../static/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script>
+    var popupShown = false;
+
+    document.getElementById("toggleButton").addEventListener("click", function() {
+        if (!popupShown) {
+            var popup = document.getElementById("fridgePopup");
+            popup.style.display = "block";
+            popupShown = true;
+        }
+    });
+
+    document.getElementById("closeButton").addEventListener("click", function() {
+        var popup = document.getElementById("fridgePopup");
+        popup.style.display = "none";
+    });
+</script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../static/assets/js/argon-dashboard.min.js?v=2.0.4"></script>
+</body>
+
+</html>
